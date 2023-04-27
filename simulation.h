@@ -11,53 +11,20 @@ struct Interval {
 
 class Simulation {
  private:
+  std::vector<Matrix> _u; //u(x,t): concentration of the inhibitor
+  std::vector<Matrix> _v; //v(x,t): concentratiom of the activator
+  double _h;              //Uniform mesh size
   double _Du;
   double _Dv;
   double _k1;
   double _k2;
-  double _h;  //Uniform mesh size
-  //contains the matrix of u and v at each time step
-  std::vector<Matrix> _u;
-  std::vector<Matrix> _v;
 
   void createFirstMatrixes(double* extremes);
-  /*
-  template<typename Func>
-  void funcToMatrix(Func initialU, Func initialV, double* extremes) {
-    int rows = (extremes[3] - extremes[1]) / _h; //yMax - yMin
-    int cols = (extremes[2] - extremes[0]) / _h; //xMax - xMin
-    Matrix u(rows, cols);
-    Matrix v(rows, cols);
-
-    for (int i = 0; i < rows; ++i)
-      for (int j = 0; j < cols; ++j) {
-        u[i][j] = initialU(i,j);
-        v[i][j] = initialV(i,j);
-      }
-
-    _u.push_back(u);
-    _v.push_back(v);
-  }
-  */
-
+  
  public:
+  Simulation(double xMin = 0, double xMax = 10, double yMin = 0, double yMax = 10, double h = 1, double k2 = 11);
   Simulation(Interval x, Interval y, /*Func firstU, Func firstV,*/ double h = 1);
-  Simulation(double xMin = 0, double xMax = 10, double yMin = 0, double yMax = 10, double h = 1);
   Simulation(Matrix& initialU, Matrix& initialV, double h = 1) : _u{initialU}, _v{initialV}, _h{h} {};
-
-  /*
-  template<typename Func>
-  Simulation(Func& initialU, Func& initialV, double xMin, double xMax, double yMin, double yMax, double h = 1) {
-    double arr[4] = {xMin, xMax, yMin, yMax};
-    funcToMatrix(initialU, initialV, arr);
-  }
-
-  template<typename Func>
-  Simulation(Func& initialU, Func& initialV, Interval x, Interval y, double h = 1) {
-    double arr[4] = {x.min, x.max, y.min, y.max};
-    funcToMatrix(initialU, initialV, arr);
-  }
-  */
 
   void setDu(double val) {_Du = val; };
   void setDv(double val) {_Dv = val; };
@@ -68,7 +35,10 @@ class Simulation {
   Matrix lastV() {return _v[_v.size()-1]; };
 
   //calculate the next step of the Matrix, given the time interval dT
-  void evolve(double dt);
+  void evolve(double dt, bool keep = true);
+
+  //save activator concentration in a file
+  void saveV(std::string filename = "simulation.dat");
 };
 
 #endif //SIMULATION_H

@@ -1,0 +1,7 @@
+import seaborn as sns
+import numpy as np
+
+data = np.loadtxt(open("data.txt", "rb"))
+threshold = data.mean()
+thresh = np.where(data > threshold, 255, 0)
+hetmap = sns.heatmap(thresh)

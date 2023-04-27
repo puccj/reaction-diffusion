@@ -1,6 +1,7 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 #include <vector>
+#include <ostream>
 
 //TO DO: bound checking
   
@@ -42,6 +43,7 @@ class Matrix {
   Matrix& operator*=(const double& rhs);
   friend Matrix operator*(Matrix lhs, double const& rhs);
   friend Matrix operator*(double const& lhs, Matrix rhs);
+  friend std::ostream& operator<<(std::ostream& os, const Matrix& obj);
 };
 
 #endif //MATRIX_H
