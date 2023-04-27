@@ -19,8 +19,8 @@ void Simulation::createFirstMatrixes(double* extremes /*, Func firstU, Func firs
       v[i][j] = 0.2*_k2 + 0.1*dist(gen);
     }
 
-  _u.push_back(u);
-  _v.push_back(v);
+  _u.push_back(std::move(u));
+  _v.push_back(std::move(v));
 }
 
 Simulation::Simulation(double xMin, double xMax, double yMin, double yMax, double h, double k2) : _h{h}, _k2{k2} {
@@ -36,8 +36,8 @@ Simulation::Simulation(Interval x, Interval y, double h) : _h{h} {
 void Simulation::evolve(double dt, bool keep) {
   int size = _u.size(); // = _v.size()
   
-  Matrix u = _u[size-1];
-  Matrix v = _v[size-1];
+  #define u _u[size-1]
+  #define v _v[size-1]
 
   int rows = u.rows();  // = v.rows()
   int cols = u.cols();  // = v.cols()
@@ -55,12 +55,12 @@ void Simulation::evolve(double dt, bool keep) {
     }
 
   if (keep) {
-    _u.push_back(nextU);
-    _v.push_back(nextV);
+    _u.push_back(std::move(nextU));
+    _v.push_back(std::move(nextV));
   }
   else {
-    _u[size-1] = nextU;
-    _v[size-1] = nextV;
+    _u[size-1] = std::move(nextU);
+    _v[size-1] = std::move(nextV);
   }
 }
 

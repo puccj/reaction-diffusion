@@ -5,18 +5,6 @@
 #include <fstream>
 
 int main () {
-  /*
-  double a = m[3][2];
-  std::cout << a << '\n';
-
-  a = -3;
-
-  m[2][3] = a;
-
-  m.print();
-
-  */
-
   double h = 0.01;
   double dt = 0.1*h*h;
   Simulation s(0,10,0,10, h);
