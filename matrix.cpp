@@ -18,6 +18,54 @@ Matrix::Matrix(int rows, int cols, double *data) :
   std::copy(data, data + rows*cols, _data);
 }
 
+Matrix::Matrix(const Matrix &src) : 
+              _rows{src._rows},
+              _cols{src._cols},
+              _data{new double[src._rows*src._cols]} {
+  
+  std::copy(src._data, src._data + src._rows*src._cols, _data);
+}
+
+Matrix::Matrix(Matrix &&src) : _rows{src._rows}, _cols{src._cols} {
+  std::swap(_data, src._data);
+}
+
+Matrix &Matrix::operator=(const Matrix &other) {
+  // Guard self assignment
+  if (this == &other)
+    return *this;
+
+  size_t thisSize = _rows * _cols;
+  size_t otherSize = other._rows * other._cols;
+
+  if (thisSize != otherSize) {            // resource in *this cannot be reused
+    double* temp = new double[otherSize]; // allocate resource, if throws, do nothing
+    delete[] _data;                       // release resource in *this
+    _data = temp;
+    _rows = other._rows;
+    _cols = other._cols;
+  } 
+
+  std::copy(other._data, other._data + otherSize, _data);
+  return *this;
+}
+
+Matrix &Matrix::operator=(Matrix &&other) {
+  // Guard self assignment
+  if (this == &other)
+    return *this;
+
+  delete[] _data;         // release resource in *this
+  _data = other._data;
+  _rows = other._rows;
+  _cols = other._cols;
+  other._data = nullptr;  // leave other in valid state
+  other._rows = 0;
+  other._cols = 0;
+  
+  return *this;
+}
+
 Matrix::~Matrix() {    
   delete[] _data;
 }

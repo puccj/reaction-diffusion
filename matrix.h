@@ -22,7 +22,11 @@ class Matrix {
  public:
   Matrix(int rows, int cols, double data = double{});
   Matrix(int rows, int cols, double *data);
-  ~Matrix();
+  Matrix(const Matrix &src);            //copy constructor
+  Matrix(Matrix &&src);			            //move constructor
+  Matrix& operator=(const Matrix &src); //copy assignment
+  Matrix& operator=(Matrix &&src);	    //move assignment
+  ~Matrix();                            //destructor
 
   int rows() { return _rows; };
   int cols() { return _cols; };

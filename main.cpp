@@ -17,7 +17,7 @@ int main () {
 
   */
 
-  double h = 0.1;
+  double h = 0.01;
   double dt = 0.1*h*h;
   Simulation s(0,10,0,10, h);
   s.setDu(1);
@@ -26,10 +26,10 @@ int main () {
   s.setk1(9);
   
   int barWidth = 70;
-  int evolutions = 1000;
+  int evolutions = 10000;
   std::cout << "Evolving...\n";
   for (int i = 0; i < evolutions; ++i) {
-    s.evolve(dt);
+    s.evolve(dt, false);
 
     //print progress bar
     std::cout << "[";
@@ -49,8 +49,7 @@ int main () {
     std::cout << ' ';
   std::cout << '\n';
 
-  s.saveV("simulationA.dat");
-
+  s.saveV("dataA.dat");
 
   return 0;
 }

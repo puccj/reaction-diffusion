@@ -36,9 +36,6 @@ Simulation::Simulation(Interval x, Interval y, double h) : _h{h} {
 void Simulation::evolve(double dt, bool keep) {
   int size = _u.size(); // = _v.size()
   
-  std::cout << "Debug: matrix u" << _u[size-1] << '\n';
-  std::cout << "Debug: matrix v" << _v[size-1] << '\n';
-  
   Matrix u = _u[size-1];
   Matrix v = _v[size-1];
 
@@ -65,9 +62,6 @@ void Simulation::evolve(double dt, bool keep) {
     _u[size-1] = nextU;
     _v[size-1] = nextV;
   }
-
-  std::cout << "Debug: matrix u" << _u[size-1] << '\n';
-  std::cout << "Debug: matrix v" << _v[size-1] << '\n';
 }
 
 void Simulation::saveV(std::string filename){
