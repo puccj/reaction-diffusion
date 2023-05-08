@@ -5,7 +5,7 @@
 #include <fstream>
 
 int main () {
-  double h = 0.01;
+  double h = 0.1;
   double dt = 0.1*h*h;
   Simulation s(0,10,0,10, h);
   s.setDu(1);
@@ -14,11 +14,13 @@ int main () {
   s.setk1(9);
   
   int barWidth = 70;
-  int evolutions = 10000;
+  int evolutions = 14000;
   std::cout << "Evolving...\n";
-  for (int i = 0; i < evolutions; ++i) {
-    s.evolve(dt, false);
+  s.evolve(dt, false);
+  for (int i = 0; i < 2000; ++i) {
+    s.evolve(dt, true);
 
+    /*
     //print progress bar
     std::cout << "[";
     int pos = barWidth * i/evolutions;
@@ -29,15 +31,37 @@ int main () {
     }
     std::cout << "] " << int(i* 100/evolutions) << " %\r";
     std::cout.flush();
+    */
   }
+  std::cout << "Step 1 done.\n";
+  s.evolve(dt, false);
+
+  for (int i = 0; i < 12000; ++i) {
+    s.evolve(dt, true);
+  }
+  std::cout << "Step 2 done.\n";
+  s.evolve(dt, false);
+
+  for (int i = 0; i < 86000; ++i) {
+    s.evolve(dt, true);
+  }
+  std::cout << "Step 3 done.\n";
+  s.evolve(dt, false);
+
+  for (int i = 0; i < 100000; ++i) {
+    s.evolve(dt, true);
+  }
+  std::cout << "Step 4 done.\n";
 
   //delete progress bar
   std::cout << "Done!";
+  /*
   for (int i = 0; i < barWidth +2; ++i)
     std::cout << ' ';
   std::cout << '\n';
+  */
 
-  s.saveV("dataA.dat");
+  s.saveV("stripes.dat");
 
   return 0;
 }

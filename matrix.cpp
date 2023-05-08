@@ -26,8 +26,13 @@ Matrix::Matrix(const Matrix &src) :
   std::copy(src._data, src._data + src._rows*src._cols, _data);
 }
 
-Matrix::Matrix(Matrix &&src) : _rows{src._rows}, _cols{src._cols} {
-  std::swap(_data, src._data);
+Matrix::Matrix(Matrix &&src) : 
+              _rows{src._rows}, 
+              _cols{src._cols}, 
+              _data{src._data} {
+  src._rows = 0;
+  src._cols = 0;
+  src._data = nullptr;
 }
 
 Matrix &Matrix::operator=(const Matrix &other) {
@@ -62,11 +67,11 @@ Matrix &Matrix::operator=(Matrix &&other) {
   other._data = nullptr;  // leave other in valid state
   other._rows = 0;
   other._cols = 0;
-  
+
   return *this;
 }
 
-Matrix::~Matrix() {    
+Matrix::~Matrix() {
   delete[] _data;
 }
 

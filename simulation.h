@@ -35,7 +35,7 @@ class Simulation {
   Matrix lastV() {return _v[_v.size()-1]; };
 
   //calculate the next step of the Matrix, given the time interval dT
-  void evolve(double dt, bool keep = true);
+  void evolve(double dt, bool overwrite = false);
 
   //save activator concentration in a file
   void saveV(std::string filename = "simulation.dat");

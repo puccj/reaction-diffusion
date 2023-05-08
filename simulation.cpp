@@ -33,7 +33,7 @@ Simulation::Simulation(Interval x, Interval y, double h) : _h{h} {
   createFirstMatrixes(arr);
 }
 
-void Simulation::evolve(double dt, bool keep) {
+void Simulation::evolve(double dt, bool overwrite) {
   int size = _u.size(); // = _v.size()
   
   #define u _u[size-1]
@@ -54,18 +54,18 @@ void Simulation::evolve(double dt, bool keep) {
       nextV[i][j] = v_ij + (_Dv*v.der2(i,j)/(_h*_h) + _k2 - v_ij - 4*u_ij*v_ij /den) *dt;
     }
 
-  if (keep) {
-    _u.push_back(std::move(nextU));
-    _v.push_back(std::move(nextV));
-  }
-  else {
+  if (overwrite) {
     _u[size-1] = std::move(nextU);
     _v[size-1] = std::move(nextV);
+  }
+  else {
+    _u.push_back(std::move(nextU));
+    _v.push_back(std::move(nextV));
   }
 }
 
 void Simulation::saveV(std::string filename){
-  std::cout << "Saving data...";
+  std::cout << "Saving data as '" << filename << "'... ";
   std::fstream fout(filename, std::ios::out);
   fout << _v.size() << '\n';
   fout << _v[0].rows() << ' ' << _v[0].cols() << '\n';

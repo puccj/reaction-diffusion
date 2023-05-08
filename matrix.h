@@ -41,7 +41,7 @@ class Matrix {
   //return a matrix whose values are the discretized second derivative
   Matrix der2();
   
-  //Overload of (some) operators
+  //overload of (some) operators
   Matrix& operator+=(const Matrix& rhs);
   Matrix& operator-=(const Matrix& rhs);
   Matrix& operator*=(const double& rhs);
