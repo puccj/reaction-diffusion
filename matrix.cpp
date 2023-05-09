@@ -85,8 +85,7 @@ void Matrix::print() {
 }
 
 double Matrix::der2(int i, int j) {
-  if (i < 0 || i >= _rows || j < 0 || j > _cols) {
-    std::cout << "Debug: i = " << i << " - j = " << j << " - rows = " << _rows << " - cols = " << _cols << '\n';
+  if (i < 0 || i >= _rows || j < 0 || j >= _cols) {
     std::cerr << "Error in der2 function: indexes not valid\n";
     return 0;
   }

@@ -1,9 +1,6 @@
 #ifndef MATRIX_H
 #define MATRIX_H
-#include <vector>
 #include <ostream>
-
-//TO DO: bound checking
   
 //To do: template<class T>
 class Matrix {
