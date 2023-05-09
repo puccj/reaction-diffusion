@@ -3,6 +3,7 @@
 
 #include "matrix.h"
 #include <iostream>
+#include <vector>
 
 struct Interval {
   double min;
