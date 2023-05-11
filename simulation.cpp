@@ -24,7 +24,7 @@ void Simulation::createFirstMatrixes(double* extremes /*, Func firstU, Func firs
 }
 
 Simulation::Simulation(double xMin, double xMax, double yMin, double yMax, double h, double k2) : _h{h}, _k2{k2} {
-  double arr[4] = { xMin, xMax, yMin, yMax};
+  double arr[4] = {xMin, xMax, yMin, yMax};
   createFirstMatrixes(arr);
 }
 

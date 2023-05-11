@@ -2,8 +2,6 @@
 #define TENSOR_H
 #include <ostream>
 
-//To do: generalize to n-dim tensor
-  
 //To do: template<class T>
 class Tensor {
   int _i;
