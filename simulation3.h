@@ -84,6 +84,6 @@ class Simulation3D {
   void saveMap(std::string filename = "map.dat");
 };
 
-double abs(double x);
+double absolute(double x);
 
 #endif //SIMULATION3D_H

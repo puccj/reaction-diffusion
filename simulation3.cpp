@@ -15,9 +15,9 @@ Point Simulation3D::closest(Point const& p) {
   double z = p.z;
 
   double gradient[3];   //nabla_h |phi|
-  gradient[0] = (abs(distFunct(p.x+_h, y   , z   )) - abs(distFunct(x-_h, y,    z   ))) /(2*_h);
-  gradient[1] = (abs(distFunct(p.x,    y+_h, z   )) - abs(distFunct(x,    y-_h, z   ))) /(2*_h);
-  gradient[2] = (abs(distFunct(p.x,    y,    z+_h)) - abs(distFunct(x,    y,    z-_h))) /(2*_h);
+  gradient[0] = (distFunct(x+_h, y   , z   ) - distFunct(x-_h, y,    z   )) /(2*_h);
+  gradient[1] = (distFunct(x,    y+_h, z   ) - distFunct(x,    y-_h, z   )) /(2*_h);
+  gradient[2] = (distFunct(x,    y,    z+_h) - distFunct(x,    y,    z-_h)) /(2*_h);
 
   //if gradient = 0, the point is already on the surface
   if (gradient[0] == 0 && gradient[1] == 0 && gradient[2] == 0) {
@@ -330,7 +330,7 @@ void Simulation3D::saveV(std::string filename) {
   fout.close();
 }
 
-double abs(double x) {
+double absolute(double x) {
   if (x < 0)
     return -x;
   return x;
