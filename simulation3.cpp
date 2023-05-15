@@ -48,13 +48,13 @@ void Simulation3D::constructMap() {
 
     //construct the 6 neighbor points + itself
     Point n[6];
-    n[0] = {p.x,   p.y,   p.z  };
-    n[1] = {p.x-1, p.y,   p.z  };
-    n[2] = {p.x+1, p.y,   p.z  };
-    n[3] = {p.x,   p.y-1, p.z  };
-    n[4] = {p.x,   p.y+1, p.z  };
-    n[5] = {p.x,   p.y,   p.z-1};
-    n[6] = {p.x,   p.y,   p.z+1};
+    n[0] = {p.x,    p.y,    p.z   };
+    n[1] = {p.x-_h, p.y,    p.z   };
+    n[2] = {p.x+_h, p.y,    p.z   };
+    n[3] = {p.x,    p.y-_h, p.z   };
+    n[4] = {p.x,    p.y+_h, p.z   };
+    n[5] = {p.x,    p.y,    p.z-_h};
+    n[6] = {p.x,    p.y,    p.z+_h};
     for (int j = 0; j < 7; ++j)
       fout << "Debug: Neighbors: " << n[j] << '\n';
     
@@ -75,14 +75,14 @@ void Simulation3D::constructMap() {
       //(A2) find their indexes
       for (int k = 0; k < nPoints; ++k) {
         Point s = _s[k];
-             if (s.x == x0   && s.y == y0   && s.z == z0  )   _map[i].neighbor[j].first[0] = k;
-        else if (s.x == x0   && s.y == y0   && s.z == z0+1)   _map[i].neighbor[j].first[1] = k;
-        else if (s.x == x0   && s.y == y0+1 && s.z == z0  )   _map[i].neighbor[j].first[2] = k;
-        else if (s.x == x0   && s.y == y0+1 && s.z == z0+1)   _map[i].neighbor[j].first[3] = k;
-        else if (s.x == x0+1 && s.y == y0   && s.z == z0  )   _map[i].neighbor[j].first[4] = k;
-        else if (s.x == x0+1 && s.y == y0   && s.z == z0+1)   _map[i].neighbor[j].first[5] = k;
-        else if (s.x == x0+1 && s.y == y0+1 && s.z == z0  )   _map[i].neighbor[j].first[6] = k;
-        else if (s.x == x0+1 && s.y == y0+1 && s.z == z0+1)   _map[i].neighbor[j].first[7] = k;
+             if (s.x == x0    && s.y == y0    && s.z == z0   )   _map[i].neighbor[j].first[0] = k;
+        else if (s.x == x0    && s.y == y0    && s.z == z0+_h)   _map[i].neighbor[j].first[1] = k;
+        else if (s.x == x0    && s.y == y0+_h && s.z == z0   )   _map[i].neighbor[j].first[2] = k;
+        else if (s.x == x0    && s.y == y0+_h && s.z == z0+_h)   _map[i].neighbor[j].first[3] = k;
+        else if (s.x == x0+_h && s.y == y0    && s.z == z0   )   _map[i].neighbor[j].first[4] = k;
+        else if (s.x == x0+_h && s.y == y0    && s.z == z0+_h)   _map[i].neighbor[j].first[5] = k;
+        else if (s.x == x0+_h && s.y == y0+_h && s.z == z0   )   _map[i].neighbor[j].first[6] = k;
+        else if (s.x == x0+_h && s.y == y0+_h && s.z == z0+_h)   _map[i].neighbor[j].first[7] = k;
       }
 
       for (int k = 0; k < 8; ++k)
@@ -198,22 +198,22 @@ double Simulation3D::der2(char concentration, int pointIndex) {
 
   if (concentration == 'u') {
     for (int i = 0; i < 8; ++i) {
-      std::cout << "Debug: der2 - u. i = " << i << '\n';
+      //std::cout << "Debug: der2 - u. i = " << i << '\n';
       result -= 6 * _u[n[0].first[i]] * n[0].second[i];
 
       for (int j = 1; j < 7; ++j) {
-        std::cout << "Debug: der2 - u. j = " << j << '\n';
+        //std::cout << "Debug: der2 - u. j = " << j << '\n';
         result += _u[n[j].first[i]] * n[j].second[i];
       }
     } 
   }
   else if (concentration == 'v') {
     for (int i = 0; i < 8; ++i) {      
-      std::cout << "Debug: der2 - v. i = " << i << '\n';
+      //std::cout << "Debug: der2 - v. i = " << i << '\n';
       result -= 6* _v[n[0].first[i]] * n[0].second[i];
 
       for (int j = 1; j < 7; ++j) {
-        std::cout << "Debug: der2 - v. j = " << j << '\n';
+        //std::cout << "Debug: der2 - v. j = " << j << '\n';
         result += _v[n[j].first[i]] * n[j].second[i];
       } 
     }
@@ -284,7 +284,7 @@ void Simulation3D::evolve(double dt) {
   double* nextV = new double(nPoints);
 
   for (int i = 0; i < nPoints; ++i) {
-    std::cout << "Debug: Evolve. i = " << i << '\n';
+    //std::cout << "Debug: Evolve. i = " << i << '\n';
     //u_ijk. I need its value. It is the interpolation(closest(u_ijk))
 
     //for the point _u[i] I have the 8 surrounding its closest point. So:
