@@ -70,7 +70,7 @@ class Simulation3D {
   void setk2(double val) {_k2 = val; };
 
   //DEBUG
-  //Point closestt(double x, double y, double z) {return closest(x,y,z);};
+  Point closestt(double x, double y, double z) {return closest({x,y,z});};
 
   //calculate the next step of the Tensor, given the time interval dt
   void evolve(double dt = 0);

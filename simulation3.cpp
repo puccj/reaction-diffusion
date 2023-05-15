@@ -15,9 +15,9 @@ Point Simulation3D::closest(Point const& p) {
   double z = p.z;
 
   double gradient[3];   //nabla_h |phi|
-  gradient[0] = (abs(distFunct(p.x+1,y,z)) - abs(distFunct(x-1,y,z))) /(2*_h);
-  gradient[1] = (abs(distFunct(p.x,y+1,z)) - abs(distFunct(x,y-1,z))) /(2*_h);
-  gradient[2] = (abs(distFunct(p.x,y,z+1)) - abs(distFunct(x,y,z-1))) /(2*_h);
+  gradient[0] = (abs(distFunct(p.x+_h, y   , z   )) - abs(distFunct(x-_h, y,    z   ))) /(2*_h);
+  gradient[1] = (abs(distFunct(p.x,    y+_h, z   )) - abs(distFunct(x,    y-_h, z   ))) /(2*_h);
+  gradient[2] = (abs(distFunct(p.x,    y,    z+_h)) - abs(distFunct(x,    y,    z-_h))) /(2*_h);
 
   // | nabla_h |phi| |
   double mod = std::sqrt(gradient[0]*gradient[0] + gradient[1]*gradient[1] + gradient[2]*gradient[2]);
