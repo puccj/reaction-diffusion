@@ -4,7 +4,7 @@
 #include <iostream>
 #include <random>
 
-double Simulation3D::distFunct(double x, double y, double z) {
+double Simulation3D::distFunc(double x, double y, double z) {
   //default function: a sphere centred in (5,5,5) with r=4.5
   return std::sqrt((x-5)*(x-5) + (y-5)*(y-5) + (z-5)*(z-5)) - 4.5;
 }
@@ -15,9 +15,9 @@ Point Simulation3D::closest(Point const& p) {
   double z = p.z;
 
   double gradient[3];   //nabla_h |phi|
-  gradient[0] = (distFunct(x+_h, y   , z   ) - distFunct(x-_h, y,    z   )) /(2*_h);
-  gradient[1] = (distFunct(x,    y+_h, z   ) - distFunct(x,    y-_h, z   )) /(2*_h);
-  gradient[2] = (distFunct(x,    y,    z+_h) - distFunct(x,    y,    z-_h)) /(2*_h);
+  gradient[0] = (distFunc(x+_h, y   , z   ) - distFunc(x-_h, y,    z   )) /(2*_h);
+  gradient[1] = (distFunc(x,    y+_h, z   ) - distFunc(x,    y-_h, z   )) /(2*_h);
+  gradient[2] = (distFunc(x,    y,    z+_h) - distFunc(x,    y,    z-_h)) /(2*_h);
 
   //if gradient = 0, the point is already on the surface
   if (gradient[0] == 0 && gradient[1] == 0 && gradient[2] == 0) {
@@ -27,7 +27,7 @@ Point Simulation3D::closest(Point const& p) {
   // | nabla_h |phi| |
   double mod = std::sqrt(gradient[0]*gradient[0] + gradient[1]*gradient[1] + gradient[2]*gradient[2]);
 
-  double dist_xyz = distFunct(x,y,z);
+  double dist_xyz = distFunc(x,y,z);
 
   Point r;
   r.x = x - gradient[0] * dist_xyz / mod;
@@ -243,8 +243,8 @@ Simulation3D::Simulation3D(Interval x, Interval y, Interval z, double h, double 
     for (double j = y.min; j < y.max; j+=h) {
       for (double k = z.min; k < z.max; k+=h) {
         //..add it to the surface definition if it's inside the narrow-band domain
-        double dist = distFunct(i,j,k);
-        //double distM = distFunct(i,j,k,true);
+        double dist = distFunc(i,j,k);
+        //double distM = distFunc(i,j,k,true);
         if (dist > -_delta && dist < _delta) {
           temp[nPoints] = {i,j,k};
           ++nPoints;

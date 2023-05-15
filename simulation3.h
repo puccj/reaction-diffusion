@@ -39,7 +39,7 @@ class Simulation3D {
   double _k2;
 
   //return phi (signed distance function) calculated at x,y,z
-  double distFunct(double x, double y, double z);
+  double distFunc(double x, double y, double z);
 
   //return the point on the surface which is closest to given point
   Point closest(Point const& p);
@@ -70,7 +70,8 @@ class Simulation3D {
   void setk2(double val) {_k2 = val; };
 
   //DEBUG
-  Point closestt(double x, double y, double z) {return closest({x,y,z});};
+  //Point closestt(double x, double y, double z) {return closest({x,y,z});};
+  double distFunct(double x, double y, double z) { return distFunc(x,y,z); };
 
   //calculate the next step of the Tensor, given the time interval dt
   void evolve(double dt = 0);
