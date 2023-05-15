@@ -64,7 +64,7 @@ void Simulation::evolve(double dt, bool overwrite) {
   }
 }
 
-void Simulation::saveV(std::string filename){
+void Simulation::saveV(std::string filename) {
   std::cout << "Saving data as '" << filename << "'... ";
   std::fstream fout(filename, std::ios::out);
   fout << _v.size() << '\n';

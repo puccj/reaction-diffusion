@@ -35,12 +35,12 @@ import numpy as np
 #     [-0.741152200369, -0.529726022182, 19.7019157715],
 # ])
 
-DATA = np.loadtxt(open("data.dat", "rb"))
+DATA = np.loadtxt(open("surface.dat", "rb"))
 
 Xs = DATA[:,0]
 Ys = DATA[:,1]
 Zs = DATA[:,2]
-value = 50*np.random.rand(len(Xs))
+value = np.loadtxt(open("value.dat", "rb"))
 # value = DATA[:,3]
 
 fig = go.Figure(data=[

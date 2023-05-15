@@ -13,7 +13,7 @@ struct Interval {
 class Simulation {
  private:
   std::vector<Matrix> _u; //u(x,t): concentration of the inhibitor
-  std::vector<Matrix> _v; //v(x,t): concentratiom of the activator
+  std::vector<Matrix> _v; //v(x,t): concentration of the activator
   double _h;              //Uniform mesh size
   double _Du;
   double _Dv;

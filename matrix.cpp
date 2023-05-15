@@ -35,38 +35,38 @@ Matrix::Matrix(Matrix &&src) :
   src._data = nullptr;
 }
 
-Matrix &Matrix::operator=(const Matrix &other) {
+Matrix &Matrix::operator=(const Matrix &src) {
   // Guard self assignment
-  if (this == &other)
+  if (this == &src)
     return *this;
 
   size_t thisSize = _rows * _cols;
-  size_t otherSize = other._rows * other._cols;
+  size_t srcSize = src._rows * src._cols;
 
-  if (thisSize != otherSize) {            // resource in *this cannot be reused
-    double* temp = new double[otherSize]; // allocate resource, if throws, do nothing
+  if (thisSize != srcSize) {            // resource in *this cannot be reused
+    double* temp = new double[srcSize]; // allocate resource, if throws, do nothing
     delete[] _data;                       // release resource in *this
     _data = temp;
-    _rows = other._rows;
-    _cols = other._cols;
+    _rows = src._rows;
+    _cols = src._cols;
   } 
 
-  std::copy(other._data, other._data + otherSize, _data);
+  std::copy(src._data, src._data + srcSize, _data);
   return *this;
 }
 
-Matrix &Matrix::operator=(Matrix &&other) {
+Matrix &Matrix::operator=(Matrix &&src) {
   // Guard self assignment
-  if (this == &other)
+  if (this == &src)
     return *this;
 
   delete[] _data;         // release resource in *this
-  _data = other._data;
-  _rows = other._rows;
-  _cols = other._cols;
-  other._data = nullptr;  // leave other in valid state
-  other._rows = 0;
-  other._cols = 0;
+  _data = src._data;
+  _rows = src._rows;
+  _cols = src._cols;
+  src._data = nullptr;  // leave src in valid state
+  src._rows = 0;
+  src._cols = 0;
 
   return *this;
 }

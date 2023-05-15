@@ -1,12 +1,19 @@
-#include "tensor.h"
+#include "simulation3.h"
 #include <iostream>
 
 int main() {
-  Tensor t(3,4,5);
+  Simulation3D s({0,10},{0,10},{0,10},0.5);
+  s.saveMap();
+  
+  s.saveSurface();
+  s.saveV();
 
-  t[1][1][1] = 3;
+  for (int i = 0; i < 1000; ++i) {
+    s.evolve();
+  }
 
-  t[0][0][1] = 2;
+  s.saveV("value2.dat");
 
-  std::cout << t[0][0][0];
+  std::cout << "Fine\n";
+  return 0;
 }
