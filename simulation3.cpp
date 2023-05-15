@@ -19,6 +19,11 @@ Point Simulation3D::closest(Point const& p) {
   gradient[1] = (abs(distFunct(p.x,    y+_h, z   )) - abs(distFunct(x,    y-_h, z   ))) /(2*_h);
   gradient[2] = (abs(distFunct(p.x,    y,    z+_h)) - abs(distFunct(x,    y,    z-_h))) /(2*_h);
 
+  //if gradient = 0, the point is already on the surface
+  if (gradient[0] == 0 && gradient[1] == 0 && gradient[2] == 0) {
+    return p;
+  }
+
   // | nabla_h |phi| |
   double mod = std::sqrt(gradient[0]*gradient[0] + gradient[1]*gradient[1] + gradient[2]*gradient[2]);
 
@@ -60,7 +65,7 @@ void Simulation3D::constructMap() {
     
     //for each of these neighbors..
     for (int j = 0; j < 7; ++j ) {
-      fout << "Debug: Neighbor " << j << ":\n";
+      fout << "Debug: Neighbor " << j << ' ' << n[j] << ":\n";
       //find the point on the surface which is closest
       Point c = closest(n[j]);
       fout << "Debug: Closest point: " << c << '\n';
