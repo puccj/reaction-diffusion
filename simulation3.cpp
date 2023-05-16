@@ -52,7 +52,7 @@ void Simulation3D::constructMap() {
     fout << "Debug: Coordinates: " << p << '\n';
 
     //construct the 6 neighbor points + itself
-    Point n[6];
+    Point n[7];
     n[0] = {p.x,    p.y,    p.z   };
     n[1] = {p.x-_h, p.y,    p.z   };
     n[2] = {p.x+_h, p.y,    p.z   };
@@ -285,8 +285,8 @@ void Simulation3D::evolve(double dt) {
     dt = 0.1*_h*_h;
   
   int nPoints = _s.nPoints();
-  double* nextU = new double(nPoints);
-  double* nextV = new double(nPoints);
+  double* nextU = new double[nPoints];
+  double* nextV = new double[nPoints];
 
   for (int i = 0; i < nPoints; ++i) {
     //std::cout << "Debug: Evolve. i = " << i << '\n';
