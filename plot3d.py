@@ -40,7 +40,7 @@ DATA = np.loadtxt(open("surface.dat", "rb"))
 Xs = DATA[:,0]
 Ys = DATA[:,1]
 Zs = DATA[:,2]
-value = np.loadtxt(open("value.dat", "rb"))
+value = np.loadtxt(open("value2.dat", "rb"))
 # value = DATA[:,3]
 
 fig = go.Figure(data=[

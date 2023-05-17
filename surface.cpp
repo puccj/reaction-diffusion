@@ -1,4 +1,7 @@
 #include "surface.h"
+#include <limits>
+#include <iostream>
+#include <iomanip>
 
 Surface::Surface(int nPoints, Point data) :
                 _nPoints{nPoints},
@@ -68,8 +71,16 @@ std::ostream &operator<<(std::ostream &os, const Point &obj) {
 
 bool operator==(const Point &lhs, const Point &rhs)
 {
-  if (lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z)
+  /*if(std::abs(lhs.x-rhs.x) < std::numeric_limits<double>::epsilon() &&
+     std::abs(lhs.y-rhs.y) < std::numeric_limits<double>::epsilon() &&
+     std::abs(lhs.z-rhs.z) < std::numeric_limits<double>::epsilon()) {
+    */
+  if(std::abs(lhs.x-rhs.x) < lhs.x/1E14 &&
+     std::abs(lhs.y-rhs.y) < lhs.y/1E14 &&
+     std::abs(lhs.z-rhs.z) < lhs.z/1E14) {
+    
     return true;
+  }
   return false; 
 }
 
