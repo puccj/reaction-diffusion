@@ -6,7 +6,7 @@ int main () {
   double dt = 0.1*h*h;
 
   for (double Dv = 0.01; Dv < 0.07; Dv += 0.01) {
-    for (int k1 = 1; k1 < 12; ++k1) {
+    for (int k1 = 1; k1 < 12; k1 += 2) {
 
       Simulation s(0,10,0,10, h);
       s.setDu(1);
@@ -17,7 +17,7 @@ int main () {
       //for progress bar
       //int barWidth = 70;
 
-      s.saveV("k1=" + std::to_string(k1) + ", dv=" + std::to_string(Dv) + " 0.dat");
+      s.saveV("data//k1=" + std::to_string(k1) + ", dv=" + std::to_string(Dv) + " 0.dat");
 
       std::cout << "Evolving...\n";
       s.evolve(dt);
@@ -38,23 +38,23 @@ int main () {
         */
       }
       std::cout << "Step 1 done.\n";
-      s.saveV("k1=" + std::to_string(k1) + ", dv=" + std::to_string(Dv) + " 2000.dat");
+      s.saveV("data//k1=" + std::to_string(k1) + ", dv=" + std::to_string(Dv) + " 2000.dat");
 
       for (int i = 0; i < 12000; ++i)
         s.evolve(dt);
 
       std::cout << "Step 2 done.\n";
-      s.saveV("k1=" + std::to_string(k1) + ", dv=" + std::to_string(Dv) + " 14000.dat");
+      s.saveV("data//k1=" + std::to_string(k1) + ", dv=" + std::to_string(Dv) + " 14000.dat");
 
       for (int i = 0; i < 86000; ++i)
         s.evolve(dt);
       std::cout << "Step 3 done.\n";
-      s.saveV("k1=" + std::to_string(k1) + ", dv=" + std::to_string(Dv) + " 100000.dat");
+      s.saveV("data//k1=" + std::to_string(k1) + ", dv=" + std::to_string(Dv) + " 100000.dat");
 
       for (int i = 0; i < 100000; ++i)
         s.evolve(dt);
       std::cout << "Step 4 done.\n";
-      s.saveV("k1=" + std::to_string(k1) + ", dv=" + std::to_string(Dv) + " 200000.dat");
+      s.saveV("data//k1=" + std::to_string(k1) + ", dv=" + std::to_string(Dv) + " 200000.dat");
 
       //delete progress bar
       std::cout << "Done!";
