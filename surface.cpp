@@ -64,26 +64,6 @@ Surface::~Surface() {
   delete[] _data;
 }
 
-std::ostream &operator<<(std::ostream &os, const Point &obj) {
-  os << '(' << obj.x << ", " << obj.y << ", " << obj.z << ')';
-  return os;
-}
-
-bool operator==(const Point &lhs, const Point &rhs)
-{
-  /*if(std::abs(lhs.x-rhs.x) < std::numeric_limits<double>::epsilon() &&
-     std::abs(lhs.y-rhs.y) < std::numeric_limits<double>::epsilon() &&
-     std::abs(lhs.z-rhs.z) < std::numeric_limits<double>::epsilon()) {
-    */
-  if(std::abs(lhs.x-rhs.x) < lhs.x/1E14 &&
-     std::abs(lhs.y-rhs.y) < lhs.y/1E14 &&
-     std::abs(lhs.z-rhs.z) < lhs.z/1E14) {
-    
-    return true;
-  }
-  return false; 
-}
-
 std::ostream &operator<<(std::ostream &os, const Surface &obj)
 {
   //format: 3 cols of value: x y z

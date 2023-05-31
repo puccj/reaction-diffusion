@@ -17,7 +17,7 @@ class Matrix {
   };
 
  public:
-  Matrix(int rows, int cols, double data = double{});
+  Matrix(int rows = 0, int cols = 0, double data = double{});
   Matrix(int rows, int cols, double *data);
   Matrix(const Matrix &src);            //copy constructor
   Matrix(Matrix &&src);			            //move constructor
@@ -35,15 +35,18 @@ class Matrix {
   
   //return the discretized second derivative at point i,j
   double der2(int i, int j);
+
   //return a matrix whose values are the discretized second derivative
-  Matrix der2();
+  //Matrix der2();
   
   //overload of (some) operators
+  /*
   Matrix& operator+=(const Matrix& rhs);
   Matrix& operator-=(const Matrix& rhs);
   Matrix& operator*=(const double& rhs);
   friend Matrix operator*(Matrix lhs, double const& rhs);
   friend Matrix operator*(double const& lhs, Matrix rhs);
+  */
   friend std::ostream& operator<<(std::ostream& os, const Matrix& obj);
 };
 

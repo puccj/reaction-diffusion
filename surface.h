@@ -1,17 +1,9 @@
 #ifndef SURFACE_H
 #define SURFACE_H
 
+#include "utils.hpp"
 #include <vector>
 #include <ostream>
-
-struct Point
-{
-  double x = 0;
-  double y = 0;
-  double z = 0;
-  friend bool operator==(const Point& lhs, const Point& rhs);
-  friend std::ostream& operator<<(std::ostream& os, const Point& obj);
-};
 
 //to do: template class T
 class Surface {

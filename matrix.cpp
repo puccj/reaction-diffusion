@@ -115,6 +115,7 @@ double Matrix::der2(int i, int j) {
   return down + up + right + left - 4*_data[_cols*i +j];
 }
 
+/*
 Matrix Matrix::der2() {
   Matrix derivative(_rows, _cols);
 
@@ -154,6 +155,7 @@ Matrix operator*(const double& lhs, Matrix rhs) {
   rhs *= lhs;
   return rhs;
 }
+*/
 
 std::ostream& operator<<(std::ostream& os, const Matrix& obj)
 {
