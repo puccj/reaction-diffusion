@@ -66,7 +66,7 @@ Point Simulation3D::closest(Point const& p) {
 }
 
 void Simulation3D::constructMap() {
-  std::cout << "Constructing map...";
+  std::cout << "Constructing map...     ";
   _map = new Map[_nPoints];
 
   //std::fstream fout("debug.txt", std::ios::out);
@@ -144,13 +144,13 @@ void Simulation3D::constructMap() {
     }
   }
 
-  std::cout << "     Done!\n";
+  std::cout << "Done!\n";
 }
 
 void Simulation3D::saveMap(std::string filename) {
   //format: 7 rows for each point (one row for each neighbor + itself)
 
-  std::cout << "Saving map...";
+  std::cout << "Saving map...     ";
   std::fstream fout(filename, std::ios::out);
 
   fout << _h << ' ' << _nPoints << '\n';
@@ -166,11 +166,11 @@ void Simulation3D::saveMap(std::string filename) {
     fout << "\n";
   }
 
-  std::cout << "    Done!\n";
+  std::cout << "Done!\n";
 }
 
 bool Simulation3D::loadMap(std::string filename) {
-  std::cout << "Loading map...";
+  std::cout << "Loading map...     ";
   std::fstream fin(filename, std::ios::in);
   if (!fin.is_open()) {
     std::cerr << "Error. Map file '"<< filename << "' couldn't be opened.\n";
@@ -195,6 +195,7 @@ bool Simulation3D::loadMap(std::string filename) {
     }
   }
 
+  std::cout << "Done.\n";
   return true;
 }
 
@@ -334,7 +335,7 @@ Simulation3D::Simulation3D(std::string mapFile, double Du, double Dv, double k1,
     _k1{k1},
     _k2{k2}
 {
-  if (!loadMap())
+  if (!loadMap(mapFile))
     throw std::runtime_error{"Cannot open file."};
   createUV();
 }

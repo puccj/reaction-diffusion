@@ -1,59 +1,56 @@
-import plotly.graph_objects as go
 import numpy as np
+from mpl_toolkits.basemap import Basemap
+import matplotlib.pyplot as plt
 
+def cart2sph(x, y, z):
+    dxy = np.sqrt(x**2 + y**2)
+    r = np.sqrt(dxy**2 + z**2)
+    theta = np.arctan2(y, x)
+    phi = np.arctan2(z, dxy)
+    theta, phi = np.rad2deg([theta, phi])
+    return theta % 360, phi, r
 
-# DATA = np.array([
-#     [-0.807237702464, 0.904373229492, 111.428744443],
-#     [-0.802470821517, 0.832159465335, 98.572957317],
-#     [-0.801052795982, 0.744231916692, 86.485869328],
-#     [-0.802505546206, 0.642324228721, 75.279804677],
-#     [-0.804158144115, 0.52882485495, 65.112895758],
-#     [-0.806418040943, 0.405733109371, 56.1627277595],
-#     [-0.808515314192, 0.275100227689, 48.508994388],
-#     [-0.809879521648, 0.139140394575, 42.1027499025],
-#     [-0.810645106092, -7.48279012695e-06, 36.8668106345],
-#     [-0.810676720161, -0.139773175337, 32.714580273],
-#     [-0.811308686707, -0.277276065449, 29.5977405865],
-#     [-0.812331692291, -0.40975978382, 27.6210856615],
-#     [-0.816075037319, -0.535615685086, 27.2420699235],
-#     [-0.823691366944, -0.654350489595, 29.1823292975],
-#     [-0.836688691603, -0.765630198427, 34.2275056775],
-#     [-0.854984518665, -0.86845932028, 43.029581434],
-#     [-0.879261949054, -0.961799684483, 55.9594146815],
-#     [-0.740499820944, 0.901631050387, 97.0261463995],
-#     [-0.735011699497, 0.82881933383, 84.971061395],
-#     [-0.733021568161, 0.740454485354, 73.733621269],
-#     [-0.732821755233, 0.638770044767, 63.3815970475],
-#     [-0.733876941678, 0.525818698874, 54.0655910105],
-#     [-0.735055978521, 0.403303715698, 45.90859502],
-#     [-0.736448900325, 0.273425879041, 38.935709456],
-#     [-0.737556181137, 0.13826504904, 33.096106049],
-#     [-0.738278724065, -9.73058423274e-06, 28.359664343],
-#     [-0.738507612286, -0.138781586244, 24.627237837],
-#     [-0.738539663773, -0.275090412979, 21.857410904],
-#     [-0.739099040189, -0.406068448513, 20.1110519655],
-#     [-0.741152200369, -0.529726022182, 19.7019157715],
-# ])
+def sph2cart(theta, phi, r=1):
+    theta, phi = np.deg2rad([theta, phi])
+    z = r * np.sin(phi)
+    rcosphi = r * np.cos(phi)
+    x = rcosphi * np.cos(theta)
+    y = rcosphi * np.sin(theta)
+    return x, y, z
 
-DATA = np.loadtxt(open("surface.dat", "rb"))
+T = np.loadtxt(open("140.dat","rb"))
+T -= T.min()
+T *= (150/T.max())
 
-Xs = DATA[:,0]
-Ys = DATA[:,1]
-Zs = DATA[:,2]
-value = np.loadtxt(open("value2.dat", "rb"))
-# value = DATA[:,3]
+pts = 1 - 2 * np.random.rand(len(T), 3)
+l = np.sqrt(np.sum(pts**2, axis=1))
+pts = pts / l[:, np.newaxis]
+#T = 150 * np.random.rand(500)
 
-fig = go.Figure(data=[
-    go.Mesh3d(
-        x=Xs,
-        y=Ys,
-        z=Zs,
-        colorbar_title='value',
-        colorscale="hot",
-        # Intensity of each vertex, which will be interpolated and color-coded
-        intensity=value,
-        showscale=True
-    )
-])
+theta, phi, r = cart2sph(*pts.T)
+nrows, ncols = (90,180)
+lon, lat = np.meshgrid(np.linspace(0,360,ncols), np.linspace(-90,90,nrows))
+xg,yg,zg = sph2cart(lon,lat)
+Ti = np.zeros_like(lon)
+for r in range(nrows):
+    for c in range(ncols):
+        v = np.array([xg[r,c], yg[r,c], zg[r,c]])
+        angs = np.arccos(np.dot(pts, v))
+        idx = np.where(angs == 0)[0]
+        if idx.any():
+            Ti[r,c] = T[idx[0]]
+        else:
+            idw = 1 / angs**2 / sum(1 / angs**2)
+            Ti[r,c] = np.sum(T * idw)
 
-fig.show()
+# set up map projection
+map = Basemap(projection='ortho', lat_0=45, lon_0=15)
+# draw lat/lon grid lines every 30 degrees.
+map.drawmeridians(np.arange(0, 360, 30))
+map.drawparallels(np.arange(-90, 90, 30))
+# compute native map projection coordinates of lat/lon grid.
+x, y = map(lon, lat)
+# contour data over the map.
+cs = map.contourf(x, y, Ti, 15)
+plt.title('Contours of T')
+plt.show()
