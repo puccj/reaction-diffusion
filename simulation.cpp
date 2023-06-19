@@ -36,9 +36,9 @@ void Simulation::evolve(double dt) {
     for (int j = 0; j < cols; ++j) {
       double u_ij = _u[i][j];
       double v_ij = _v[i][j];
-      double den = 1 + v_ij*v_ij;
-      nextU[i][j] = u_ij + (_Du*_u.der2(i,j)/(_h*_h) + _k1*(v_ij - u_ij*v_ij /den)) *dt;
-      nextV[i][j] = v_ij + (_Dv*_v.der2(i,j)/(_h*_h) + _k2 - v_ij - 4*u_ij*v_ij /den) *dt;
+      double frac = u_ij*v_ij / (1 + v_ij*v_ij);
+      nextU[i][j] = u_ij + (_Du*_u.der2(i,j)/(_h*_h) + _k1*(v_ij - frac)) *dt;
+      nextV[i][j] = v_ij + (_Dv*_v.der2(i,j)/(_h*_h) + _k2 - v_ij - 4*frac) *dt;
     }
 
     _u = std::move(nextU);
@@ -63,13 +63,13 @@ void Simulation::fillUV() {
   std::cout << "Debug: cols = " << cols << '\n';
 
   std::random_device gen;
-  std::uniform_real_distribution<double> dist(-1,1);
+  std::uniform_real_distribution<double> dist(-0.1,0.1);
   
   for (int i = 0; i < rows; ++i) {
     for (int j = 0; j < cols; ++j) {
       //default functions
-      _u[i][j] = 1+ 0.04*_k2*_k2 + 0.1*dist(gen);
-      _v[i][j] = 0.2*_k2 + 0.1*dist(gen);
+      _u[i][j] = 1+ 0.04*_k2*_k2 + dist(gen);
+      _v[i][j] = 0.2*_k2 + dist(gen);
     }
   }
 }

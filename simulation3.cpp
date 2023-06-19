@@ -24,8 +24,7 @@ Simulation3D::Simulation3D(Interval x, Interval y, Interval z, double h, double 
     for (double j = y.min; j < y.max; j+=h) {
       for (double k = z.min; k < z.max; k+=h) {
         //..add it to the surface definition if it's inside the narrow-band domain
-        double dist = distFunc(i,j,k);
-        //double distM = distFunc(i,j,k,true);
+        double dist = phi(i,j,k);
         if (dist > -_delta && dist < _delta) {
           temp[_nPoints] = {i,j,k};
           ++_nPoints;
@@ -43,7 +42,6 @@ Simulation3D::Simulation3D(Interval x, Interval y, Interval z, double h, double 
   constructMap();
 }
 
-
 Simulation3D::Simulation3D(std::string mapFile, double Du, double Dv, double k1, double k2) 
   : _s{Surface()},
     _u{nullptr},
@@ -55,7 +53,7 @@ Simulation3D::Simulation3D(std::string mapFile, double Du, double Dv, double k1,
     _k2{k2}
 {
   if (!loadMap(mapFile))
-    throw std::runtime_error{"Cannot open file."};
+    throw std::runtime_error{"loadMap() cannot open file."};
   createUV();
 }
 
@@ -72,12 +70,13 @@ void Simulation3D::setk2(double val) {
 }
 
 void Simulation3D::saveMap(std::string filename) {
-  //format: 7 rows for each point (one row for each neighbor + itself)
+  //format: 7 rows for each point (one row for each neighbor 'n' + itself)
+  //        in each of these rows: index and weight of the 8 points surrounding n
 
   std::cout << "Saving map...     ";
   std::fstream fout(filename, std::ios::out);
 
-  fout << _h << ' ' << _nPoints << '\n';
+  fout << _h << ' ' << _nPoints << "\n\n";
   
   for (int i = 0; i < _nPoints; ++i) {
     for (int n = 0; n < 7; ++n) {
@@ -95,10 +94,10 @@ void Simulation3D::saveMap(std::string filename) {
 
 void Simulation3D::saveSurface(std::string filename) {
   if (_s.nPoints() == 0) {
-    std::cerr << "Error, cannot save surface of a simulation created from a map\n";
+    std::cerr << "Error, cannot save surface of a simulation created from a map.\n";
     return;
   }
-  
+
   std::fstream fout(filename, std::ios::out);
   fout << _s;
   fout.close();
@@ -121,11 +120,22 @@ void Simulation3D::evolve(double dt) {
   double* nextV = new double[_nPoints];
 
   for (int i = 0; i < _nPoints; ++i) {
-    double u_ijk = _u[i];
-    double v_ijk = _v[i];
-    double den = 1 + v_ijk*v_ijk;
-    nextU[i] = u_ijk + (_Du*der2('u',i) + _k1 * (u_ijk*v_ijk /den)) *dt;
-    nextV[i] = v_ijk + (_Dv*der2('v',i) + _k2 - v_ijk  - 4*u_ijk*v_ijk /den) *dt;
+    //u_ijk is not _u[i], because you need to take the interpolation of the closest point of i
+    double u_ijk = 0;
+    double v_ijk = 0;
+
+    std::pair<int[8], double[8]> stencil = _map[i].neighbor[0];
+    for (int j = 0; j < 8; ++j) {
+      int index = stencil.first[j];
+      double weight = stencil.second[j];
+      u_ijk += _u[index] * weight;
+      v_ijk += _v[index] * weight;
+    }
+
+    //calculate evolution
+    double frac = u_ijk*v_ijk/ (1+ v_ijk*v_ijk);
+    nextU[i] = u_ijk + (_Du*der2('u',i) + _k1 * frac) *dt;
+    nextV[i] = v_ijk + (_Dv*der2('v',i) + _k2 - v_ijk  - 4*frac) *dt;
   }
 
   //release data from u and v
@@ -145,7 +155,7 @@ void Simulation3D::evolve(double dt) {
 //private
 
 
-double Simulation3D::distFunc(double x, double y, double z) {
+double Simulation3D::phi(double x, double y, double z) {
   //default function: a sphere centred in (5,5,5) with r=4.5
   return std::sqrt((x-5)*(x-5) + (y-5)*(y-5) + (z-5)*(z-5)) - 4.5;
 }
@@ -168,12 +178,12 @@ void Simulation3D::createUV() {
 
 void Simulation3D::fillFirstUV() {
   std::random_device gen;
-  std::uniform_real_distribution<double> dist(-1,1);
+  std::uniform_real_distribution<double> dist(-0.1,0.1);
 
   for (int i = 0; i < _nPoints; ++i) {
     //default functions
-    _u[i] = 1+ 0.04*_k2*_k2 + 0.1*dist(gen);
-    _v[i] = 0.2*_k2 + 0.1*dist(gen);
+    _u[i] = 1+ 0.04*_k2*_k2 + dist(gen);
+    _v[i] = 0.2*_k2 + dist(gen);
   }
 }
 
@@ -186,8 +196,10 @@ void Simulation3D::constructMap() {
   //for each surface point...
   for (int i = 0; i < _nPoints; ++i) {
     //fout << "Debug: Point " << i << '\n';
+
     //get the coordinate of the surface point
     Point p = _s[i];
+    
     //fout << "Debug: Coordinates: " << p << '\n';
 
     //construct the 6 neighbor points + itself
@@ -206,9 +218,12 @@ void Simulation3D::constructMap() {
 
     //for each of these neighbors..
     for (int j = 0; j < 7; ++j ) {
+      
       //fout << "Debug: Neighbor " << j << ' ' << n[j] << ":\n";
+
       //find the point on the surface which is closest
       Point c = closest(n[j]);
+      
       //fout << "Debug: Closest point: " << c << '\n';
       
       //(A)  find the indexes of the 8 surface points surrounding the closest point of neighbor[j]:
@@ -216,9 +231,10 @@ void Simulation3D::constructMap() {
       double x0 = (int)(c.x/_h) *_h;
       double y0 = (int)(c.y/_h) *_h;
       double z0 = (int)(c.z/_h) *_h;
+
       //fout << "Debug: up-left-front point: " << Point{x0,y0,z0} << '\n';
 
-      //(A2) find their indexes
+      //(A2) find their indexes in _s
       for (int k = 0; k < _nPoints; ++k) {
         Point s = _s[k];
         
@@ -264,20 +280,20 @@ Point Simulation3D::closest(Point const& p) {
   double y = p.y;
   double z = p.z;
 
-  double gradient[3];   //nabla_h |phi|
-  gradient[0] = (distFunc(x+_h, y   , z   ) - distFunc(x-_h, y,    z   )) /(2*_h);
-  gradient[1] = (distFunc(x,    y+_h, z   ) - distFunc(x,    y-_h, z   )) /(2*_h);
-  gradient[2] = (distFunc(x,    y,    z+_h) - distFunc(x,    y,    z-_h)) /(2*_h);
+  double gradient[3];   //nabla_h (phi)
+  gradient[0] = (phi(x+_h, y   , z   ) - phi(x-_h, y,    z   )) /(2*_h);
+  gradient[1] = (phi(x,    y+_h, z   ) - phi(x,    y-_h, z   )) /(2*_h);
+  gradient[2] = (phi(x,    y,    z+_h) - phi(x,    y,    z-_h)) /(2*_h);
 
   //if gradient = 0, the point is already on the surface
   if (gradient[0] == 0 && gradient[1] == 0 && gradient[2] == 0) {
     return p;
   }
 
-  // | nabla_h |phi| |
+  // | nabla_h (phi) |
   double mod = std::sqrt(gradient[0]*gradient[0] + gradient[1]*gradient[1] + gradient[2]*gradient[2]);
 
-  double dist_xyz = distFunc(x,y,z);
+  double dist_xyz = phi(x,y,z);
 
   Point r;
   r.x = x - gradient[0] * dist_xyz / mod;
@@ -301,11 +317,7 @@ bool Simulation3D::loadMap(std::string filename) {
   _map = new Map[_nPoints];
 
   for (int i = 0; i < _nPoints; ++i) {
-    for (int j = 0; j < 8; ++j) {
-      fin >> _map[i].neighbor[0].first[j];
-      fin >> _map[i].neighbor[0].second[j];
-    }
-    for (int n = 1; n < 7; ++n) {
+    for (int n = 0; n < 7; ++n) {
       for (int j = 0; j < 8; ++j) {
         fin >> _map[i].neighbor[n].first[j];
         fin >> _map[i].neighbor[n].second[j];
@@ -319,24 +331,26 @@ bool Simulation3D::loadMap(std::string filename) {
 
 double Simulation3D::der2(char concentration, int pointIndex) {
   std::pair<int[8], double[8]> n[7] = {_map[pointIndex].neighbor[0],
-                                       _map[pointIndex].neighbor[2],
                                        _map[pointIndex].neighbor[1],
+                                       _map[pointIndex].neighbor[2],
                                        _map[pointIndex].neighbor[3],
                                        _map[pointIndex].neighbor[4],
                                        _map[pointIndex].neighbor[5],
                                        _map[pointIndex].neighbor[6]};
 
+  //The function needs to return (down + up + right + left + front + back - 6*u_ijk) / (_h*_h);
 
   //interpolation: the value of function in a point p is a weighted sum of
   //the funcion value on the 8 points surrounding closest(p)
 
-  //The function needs to return (down + up + right + left + front + back - 6*u_ijk) / (_h*_h);
+  //Remind that n[j].first  = indexes of the 8 points surrounding neighbor j
+  //            n[j].second = weights of these 8 points in the interpolation
+
   double result = 0;
 
   if (concentration == 'u') {
     for (int i = 0; i < 8; ++i) {
       result -= 6 * _u[n[0].first[i]] * n[0].second[i];
-
       for (int j = 1; j < 7; ++j) {
         result += _u[n[j].first[i]] * n[j].second[i];
       }

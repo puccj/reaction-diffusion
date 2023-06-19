@@ -6,7 +6,7 @@
 
 class Simulation3D {
  private:
-  //map a surface point to its 6 neighbors + itself.
+  //Each surface point is mapped to its 6 neighbors + itself.
   //Each of the neighbors 'n' is in turn mapped to:
   // - pair.fisrt:  the indexes (inside of _s array) of the 8 points surrounding closest(n)
   // - pair.second: the weights of the interpolation with each of these 8 points
@@ -53,8 +53,8 @@ class Simulation3D {
   void evolve(double dt = 0);
 
  private:
-  //return phi (signed distance function) calculated at x,y,z
-  double distFunc(double x, double y, double z);
+  //return the signed distance function calculated at x,y,z
+  double phi(double x, double y, double z);
 
   //create the first UV value
   void createUV();
@@ -73,7 +73,7 @@ class Simulation3D {
   bool loadMap(std::string filename = "map.dat");
 
   //return the approximation of the second derivative of given concentration at point corresponding to index
-  double der2(char concentration, int pointIndex);  
+  double der2(char concentration, int pointIndex);
 };
 
 #endif //SIMULATION3D_H
