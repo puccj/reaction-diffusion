@@ -3,7 +3,7 @@
 
 int main() {
 
-  Simulation3D s({0,10},{0,10},{0,10},1);
+  Simulation3D s({0,11},{0,11},{0,11},1);
   s.saveSurface("surface1.dat");
   s.saveMap("map1.dat");
 
