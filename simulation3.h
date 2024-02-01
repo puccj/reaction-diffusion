@@ -46,8 +46,11 @@ class Simulation3D {
   //save surface points in a file. Format: 3 cols of data: x y z
   void saveSurface(std::string filename = "surface.dat");
 
+  //save inhibitor concentration in a file. Format: 1 col of data
+  void saveU(std::string filename = "u.dat");
+
   //save activator concentration in a file. Format: 1 col of data
-  void saveV(std::string filename = "value.dat");
+  void saveV(std::string filename = "v.dat");
 
   //calculate the next step of the Tensor, given the time interval dt
   void evolve(double dt = 0);

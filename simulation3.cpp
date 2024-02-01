@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <random>
+#include <chrono>
 
 Simulation3D::Simulation3D(Interval x, Interval y, Interval z, double h, double k2) 
   : _nPoints{0},
@@ -93,6 +94,7 @@ void Simulation3D::saveMap(std::string filename) {
 }
 
 void Simulation3D::saveSurface(std::string filename) {
+  std::cout << "Saving surface...     ";
   if (_s.nPoints() == 0) {
     std::cerr << "Error, cannot save surface of a simulation created from a map.\n";
     return;
@@ -100,6 +102,16 @@ void Simulation3D::saveSurface(std::string filename) {
 
   std::fstream fout(filename, std::ios::out);
   fout << _s;
+  fout.close();
+
+  std::cout << "Done!\n";
+}
+
+void Simulation3D::saveU(std::string filename) {
+  std::fstream fout(filename, std::ios::out);
+  for (int i = 0; i < _nPoints; ++i)
+    fout << _u[i] << '\n';
+
   fout.close();
 }
 
@@ -188,6 +200,7 @@ void Simulation3D::fillFirstUV() {
 }
 
 void Simulation3D::constructMap() {
+  auto start_time = std::chrono::high_resolution_clock::now();
   std::cout << "Constructing map...     ";
   _map = new Map[_nPoints];
 
@@ -272,7 +285,9 @@ void Simulation3D::constructMap() {
     }
   }
 
-  std::cout << "Done!\n";
+  auto end_time = std::chrono::high_resolution_clock::now();
+  auto duration = std::chrono::duration_cast<std::chrono::minutes>(end_time - start_time);
+  std::cout << "Done! (" << duration.count() << " minutes)\n";
 }
 
 Point Simulation3D::closest(Point const& p) {
