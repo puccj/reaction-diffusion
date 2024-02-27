@@ -189,7 +189,9 @@ void Simulation3D::createUV() {
 }
 
 void Simulation3D::fillFirstUV() {
-  std::random_device gen;
+  std::random_device seed;
+  std::cout << "Debug: seed = " << seed() << '\n';
+  std::mt19937 gen(seed());
   std::uniform_real_distribution<double> dist(-0.1,0.1);
 
   for (int i = 0; i < _nPoints; ++i) {
