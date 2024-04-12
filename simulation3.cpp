@@ -126,7 +126,7 @@ void Simulation3D::saveV(std::string filename) {
 
 void Simulation3D::evolve(double dt) {
   if (dt == 0)
-    dt = 0.1*_h*_h;
+    dt = 0.1*_h*_h*_h;
   
   double* nextU = new double[_nPoints];
   double* nextV = new double[_nPoints];
